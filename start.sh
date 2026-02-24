@@ -1,8 +1,5 @@
 #!/bin/bash
 
-#docker run -d --env-file .env -v ./.openclaw:/home/node/.openclaw --name openclaw -p 18789:18789 node:24 bash -c "tail -f /dev/null"
-#docker run -d --env-file .env -v ./.openclaw:/home/node/.openclaw --name openclaw -p 18789:18789 r82wei/openclaw:20260224-164504 bash -c "tail -f /dev/null"
-
 mkdir -p ./openclaw-data
 chmod 777 ./openclaw-data
 
