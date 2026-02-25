@@ -1,3 +1,5 @@
 #!/bin/bash
 
-docker exec -it openclaw bash
+source ./libs/openclaw.sh
+
+exec_in_openclaw

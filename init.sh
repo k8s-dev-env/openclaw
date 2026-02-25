@@ -9,11 +9,7 @@ if [ -z "$OPENCLAW_GATEWAY_TOKEN" ]; then
     echo "OPENCLAW_GATEWAY_TOKEN=$OPENCLAW_GATEWAY_TOKEN" >> .env
 fi
 
-docker run -it --rm \
---env-file openclaw.env \
---env-file .env \
--v ./openclaw-data:/home/node/.openclaw \
---name openclaw \
--p 18789:18789 \
-ghcr.io/openclaw/openclaw \
-bash -c "node openclaw.mjs onboard"
+source ./libs/openclaw.sh
+
+run_openclaw
+exec_openclaw_command onboard

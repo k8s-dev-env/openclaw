@@ -1,4 +1,5 @@
 #!/bin/bash
 
-docker stop openclaw
-docker rm openclaw
+source ./libs/openclaw.sh
+
+stop_openclaw

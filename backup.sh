@@ -5,5 +5,5 @@ DATE=$(TZ=Asia/Taipei date +%Y%m%d-%H%M%S)
 echo DATE: $DATE
 
 # backup the openclaw-data directory、.env、.ssh
-tar -czvf openclaw-data-$DATE.tar.gz openclaw-data .env .ssh
-echo "openclaw-data backup saved to openclaw-data-$DATE.tar.gz"
+zip -e -r openclaw-data-$DATE.zip openclaw-data .env .ssh
+echo "openclaw-data backup saved to openclaw-data-$DATE.zip"
