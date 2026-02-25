@@ -8,10 +8,12 @@ run_openclaw() {
     --env-file .env \
     -v ./openclaw-data:/home/node/.openclaw \
     -v ./.ssh:/home/node/.ssh \
+    -v ./obsidian:/home/node/obsidian \
     --name openclaw \
     -p 18789:18789 \
     --shm-size=2gb \
     --cap-add=SYS_ADMIN \
+    --restart unless-stopped \
     ghcr.io/openclaw/openclaw:latest
 }
 
