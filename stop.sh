@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source ./openclaw.env
 source ./libs/openclaw.sh
 
-stop_openclaw
+stop_webtop_openclaw

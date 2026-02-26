@@ -3,5 +3,5 @@
 source openclaw.env
 source ./libs/openclaw.sh
 
-# approve openclaw device
-pairing_openclaw_device
+# pair DM
+pairing_openclaw_DM

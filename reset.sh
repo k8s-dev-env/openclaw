@@ -2,4 +2,4 @@
 
 source ./libs/openclaw.sh
 
-exec_tty_in_openclaw
+reset_webtop_openclaw

@@ -2,4 +2,4 @@
 
 source ./libs/openclaw.sh
 
-sudo_exec_in_openclaw
+sudo_exec_tty_in_openclaw
