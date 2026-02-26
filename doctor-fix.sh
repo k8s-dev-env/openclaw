@@ -3,5 +3,4 @@
 source openclaw.env
 source ./libs/openclaw.sh
 
-# approve openclaw device
-pairing_openclaw_device
+run_openclaw_doctor_fix

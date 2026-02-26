@@ -1,18 +1,28 @@
 #!/bin/bash
 
-mkdir -p ./openclaw-data
-chmod 777 ./openclaw-data
 
+source ./openclaw.env
 source ./libs/openclaw.sh
 
-run_openclaw
+echo "WEBTOP_OPENCLAW_IMAGE=$WEBTOP_OPENCLAW_IMAGE"
 
-sudo_exec_bash_in_openclaw "apt update && apt install -y jq chromium"
-sudo_exec_bash_in_openclaw "nohup /usr/bin/chromium \
-  --headless=new \
-  --no-sandbox \
-  --disable-dev-shm-usage \
-  --remote-debugging-address=127.0.0.1 \
-  --remote-debugging-port=18800 \
-  --user-data-dir=/tmp/chromium-profile \
-  about:blank >/tmp/chromium.log 2>&1 &"
+if [ ! -d "./openclaw-data" ]; then
+  echo "openclaw-data 資料夾不存在，需要初始化"
+
+  # 建立 openclaw 資料夾
+  mkdir -p ./openclaw-data
+  chmod 777 ./openclaw-data
+
+  # 啟動 webtop 容器
+  run_webtop
+
+  # 沒有 systemd：先用 --allow-unconfigured 起 gateway（還沒 onboard 也能跑），再跑 onboard
+  run_openclaw_gateway_allow_unconfigured
+
+  # 初始化 openclaw（此時 gateway 已在跑，Control UI / health check 可用）
+  run_openclaw_onboard
+else
+  # 啟動 webtop 容器 & openclaw
+  run_webtop_openclaw
+fi
+
