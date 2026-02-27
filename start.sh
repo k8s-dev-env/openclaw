@@ -57,3 +57,4 @@ else
   run_webtop_openclaw
 fi
 
+echo "openclaw 啟動完成"
