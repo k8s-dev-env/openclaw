@@ -19,6 +19,9 @@ if [ ! -d "./openclaw-data" ]; then
   # 沒有 systemd：先用 --allow-unconfigured 起 gateway（還沒 onboard 也能跑），再跑 onboard
   run_openclaw_gateway_allow_unconfigured
 
+  # 啟動 openclaw node
+  run_openclaw_node
+
   # 初始化 openclaw（此時 gateway 已在跑，Control UI / health check 可用）
   run_openclaw_onboard
 else
