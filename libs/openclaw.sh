@@ -20,11 +20,10 @@ run_webtop() {
     -v ./.openclaw:/config/.openclaw \
     -v ./obsidian:/config/obsidian \
     -v ./nginx/conf.d/openclaw.conf:/etc/nginx/conf.d/openclaw.conf \
-    -v /dev/device:/dev/device \
+    -v /dev/device:/dev/device:ro \
     --name webtop-openclaw-${OPENCLAW_ID} \
-    -p 3000:3000 \
-    -p 3001:3001 \
-    -p 18789:8080 \
+    -p ${WEBTOP_HTTPS_PORT}:3001 \
+    -p ${DASHBOARD_PORT}:8080 \
     --shm-size=2gb \
     --cap-add=SYS_ADMIN \
     --restart unless-stopped \
@@ -77,6 +76,7 @@ restart_webtop_openclaw() {
 }
 
 reset_webtop_openclaw() {
+  rm -rf .env
   sudo rm -rf ./.openclaw
   sudo rm -rf ./webtop
 }
