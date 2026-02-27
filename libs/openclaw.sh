@@ -1,5 +1,9 @@
 #!/bin/bash
 
+chmod_openclaw_home_777() {
+  sudo_exec_bash_in_openclaw "chmod 777 /config/.openclaw"
+}
+
 # 在本地啟動 webtop 容器
 run_webtop() {
   if [ -z "$WEBTOP_OPENCLAW_IMAGE" ]; then
@@ -28,7 +32,8 @@ run_webtop() {
     --cap-add=SYS_ADMIN \
     --restart unless-stopped \
     ${WEBTOP_OPENCLAW_IMAGE}
-
+  
+  chmod_openclaw_home_777
   exec_bash_in_openclaw "while ! nc -z -w 3 localhost 3000; do echo 'Waiting for webtop to start...'; sleep 3; done"
 }
 
