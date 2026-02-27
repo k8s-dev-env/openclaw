@@ -21,6 +21,20 @@ if [ ! -d "./.openclaw" ]; then
   fi
   echo "OPENCLAW_ID=$OPENCLAW_ID" >> .env
 
+  # 設定 Dashboard Port
+  read -p "請輸入 Dashboard Port (留空則使用預設值 18789，可自行到 .env 修改): " DASHBOARD_PORT
+  if [ -z "$DASHBOARD_PORT" ]; then
+    DASHBOARD_PORT=18789
+  fi
+  echo "DASHBOARD_PORT=$DASHBOARD_PORT" >> .env
+
+  # 設定 Webtop Port
+  read -p "請輸入 Webtop https Port (留空則使用預設值 3001，可自行到 .env 修改): " WEBTOP_HTTPS_PORT
+  if [ -z "$WEBTOP_HTTPS_PORT" ]; then
+    WEBTOP_HTTPS_PORT=3001
+  fi
+  echo "WEBTOP_HTTPS_PORT=$WEBTOP_HTTPS_PORT" >> .env
+
   # 啟動 webtop 容器
   run_webtop
 
