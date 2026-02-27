@@ -64,11 +64,6 @@ Web 介面：
 2. 完成 onboarding（同一個 gateway / 同一使用者 / 同一 state）
 3. 確認服務狀態：`./status.sh`
 
-手動補跑 onboarding（若你要重做設定）：
-
-```bash
-./openclaw.sh onboard
-```
 
 ### 3) Channel Pairing（DM / Chat channel）
 
