@@ -4,7 +4,7 @@ Container setup for running OpenClaw on top of linuxserver/webtop.
 
 ---
 
-## English (Default)
+## English
 
 ### What this repo contains
 
