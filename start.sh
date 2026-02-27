@@ -1,7 +1,7 @@
 #!/bin/bash
 
-
 source ./openclaw.env
+source .env
 source ./libs/openclaw.sh
 
 echo "WEBTOP_OPENCLAW_IMAGE=$WEBTOP_OPENCLAW_IMAGE"
@@ -12,6 +12,14 @@ if [ ! -d "./.openclaw" ]; then
   # 建立 openclaw 資料夾
   mkdir -p ./.openclaw
   chmod 777 ./.openclaw
+
+  # 設定 openclaw ID，用於容器名稱
+  read -p "請輸入 openclaw ID (留空則隨機生成，可自行到 .env 修改): " OPENCLAW_ID
+  if [ -z "$OPENCLAW_ID" ]; then
+    # 隨機生成 openclaw ID
+    OPENCLAW_ID=$(openssl rand -hex 8)
+  fi
+  echo "OPENCLAW_ID=$OPENCLAW_ID" >> .env
 
   # 啟動 webtop 容器
   run_webtop

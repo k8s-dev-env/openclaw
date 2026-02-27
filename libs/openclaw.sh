@@ -21,7 +21,7 @@ run_webtop() {
     -v ./obsidian:/config/obsidian \
     -v ./nginx/conf.d/openclaw.conf:/etc/nginx/conf.d/openclaw.conf \
     -v /dev/device:/dev/device \
-    --name openclaw \
+    --name webtop-openclaw-${OPENCLAW_ID} \
     -p 3000:3000 \
     -p 3001:3001 \
     -p 18789:8080 \
@@ -65,9 +65,9 @@ run_webtop_openclaw() {
 
 stop_webtop_openclaw() {
   # 如果 openclaw 容器存在，則停止並刪除
-  if docker ps -a | grep -q openclaw; then
-    echo "$(docker stop openclaw) stopped"
-    echo "$(docker rm openclaw) removed"
+  if docker ps -a | grep -q webtop-openclaw-${OPENCLAW_ID}; then
+    echo "$(docker stop webtop-openclaw-${OPENCLAW_ID}) stopped"
+    echo "$(docker rm webtop-openclaw-${OPENCLAW_ID}) removed"
   fi
 }
 
@@ -103,58 +103,58 @@ pairing_openclaw_DM() {
 
 # 使用互動模式進入 openclaw 容器
 exec_tty_in_openclaw() {
-  docker exec -it -u 1000 openclaw bash
+  docker exec -it -u 1000 webtop-openclaw-${OPENCLAW_ID} bash
 }
 
 # 使用互動模式進入 openclaw 容器並以 root 執行
 sudo_exec_tty_in_openclaw() {
-  docker exec -it -u 0 openclaw bash
+  docker exec -it -u 0 webtop-openclaw-${OPENCLAW_ID} bash
 }
 
 # 在 openclaw 容器內執行一段 shell 指令（傳入單一字串，可含 &&、>、& 等）
 exec_bash_tty_in_openclaw() {
   echo "$*"
-  docker exec -it -u 1000 openclaw bash -c 'eval "$1"' _ "$*"
+  docker exec -it -u 1000 webtop-openclaw-${OPENCLAW_ID} bash -c 'eval "$1"' _ "$*"
 }
 
 # 在 openclaw 容器內以 root 執行一段 shell 指令（傳入單一字串，可含 &&、>、& 等）
 sudo_exec_bash_tty_in_openclaw() {
   echo "$*"
-  docker exec -it -u 0 openclaw bash -c 'eval "$1"' _ "$*"
+  docker exec -it -u 0 webtop-openclaw-${OPENCLAW_ID} bash -c 'eval "$1"' _ "$*"
 }
 
 # 在 openclaw 容器內執行一段 shell 指令（傳入單一字串，可含 &&、>、& 等）
 exec_bash_in_openclaw() {
   echo "$*"
-  docker exec -u 1000 openclaw bash -c 'eval "$1"' _ "$*"
+  docker exec -u 1000 webtop-openclaw-${OPENCLAW_ID} bash -c 'eval "$1"' _ "$*"
 }
 
 # 在 openclaw 容器內以 root 執行一段 shell 指令（傳入單一字串，可含 &&、>、& 等）
 sudo_exec_bash_in_openclaw() {
   echo "$*"
-  docker exec -u 0 openclaw bash -c 'eval "$1"' _ "$*"
+  docker exec -u 0 webtop-openclaw-${OPENCLAW_ID} bash -c 'eval "$1"' _ "$*"
 }
 
 # 在 openclaw 容器內執行 openclaw 命令
 exec_tty_openclaw_command() {
   echo "openclaw $@"
-  docker exec -it -u 1000 openclaw bash -c 'openclaw "$@"' _ "$@"
+  docker exec -it -u 1000 webtop-openclaw-${OPENCLAW_ID} bash -c 'openclaw "$@"' _ "$@"
 }
 
 # 在 openclaw 容器內以 root 執行 openclaw 命令
 sudo_exec_tty_openclaw_command() {
   echo "openclaw $@"
-  docker exec -it -u 0 openclaw bash -c 'openclaw "$@"' _ "$@"
+  docker exec -it -u 0 webtop-openclaw-${OPENCLAW_ID} bash -c 'openclaw "$@"' _ "$@"
 }
 
 # 在 openclaw 容器內執行 openclaw 命令
 exec_openclaw_command() {
   echo "openclaw $@"
-  docker exec -u 1000 openclaw bash -c 'openclaw "$@"' _ "$@"
+  docker exec -u 1000 webtop-openclaw-${OPENCLAW_ID} bash -c 'openclaw "$@"' _ "$@"
 }
 
 # 在 openclaw 容器內以 root 執行 openclaw 命令
 sudo_exec_openclaw_command() {
   echo "openclaw $@"
-  docker exec -u 0 openclaw bash -c 'openclaw "$@"' _ "$@"
+  docker exec -u 0 webtop-openclaw-${OPENCLAW_ID} bash -c 'openclaw "$@"' _ "$@"
 }

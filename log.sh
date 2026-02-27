@@ -1,3 +1,5 @@
 #!/bin/bash
 
-docker logs -f openclaw
+source .env
+
+docker logs -f webtop-openclaw-${OPENCLAW_ID}
