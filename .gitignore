@@ -1,6 +1,6 @@
 .env
 .ssh
 *.zip
-openclaw-data*
+.openclaw
 obsidian
 webtop

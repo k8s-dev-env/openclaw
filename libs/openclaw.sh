@@ -17,11 +17,14 @@ run_webtop() {
     -e PUID=1000 \
     -e PGID=1000 \
     -v ./webtop:/config \
-    -v ./openclaw-data:/config/.openclaw \
+    -v ./.openclaw:/config/.openclaw \
     -v ./obsidian:/config/obsidian \
+    -v ./nginx/conf.d/openclaw.conf:/etc/nginx/conf.d/openclaw.conf \
+    -v /dev/device:/dev/device \
     --name openclaw \
     -p 3000:3000 \
     -p 3001:3001 \
+    -p 18789:8080 \
     --shm-size=2gb \
     --cap-add=SYS_ADMIN \
     --restart unless-stopped \
@@ -40,7 +43,7 @@ run_openclaw() {
 
 # 啟動 openclaw gateway（需已有 config，例如 onboard 後）
 run_openclaw_gateway() {
-  exec_bash_in_openclaw "nohup openclaw gateway run &"
+  exec_bash_in_openclaw "nohup openclaw gateway run > /config/.openclaw/openclaw-gateway.log 2>&1 &"
   exec_bash_in_openclaw "while ! nc -z -w 3 localhost 18789; do echo 'Waiting for gateway to start...'; sleep 3; done"
 }
 
@@ -52,7 +55,7 @@ run_openclaw_gateway_allow_unconfigured() {
 
 # 確定 openclaw gateway 啟動後，再啟動 openclaw node
 run_openclaw_node() {
-  exec_bash_in_openclaw "nohup openclaw node run &"
+  exec_bash_in_openclaw "nohup openclaw node run > /config/.openclaw/openclaw-node.log 2>&1 &"
 }
 
 run_webtop_openclaw() {
@@ -74,7 +77,7 @@ restart_webtop_openclaw() {
 }
 
 reset_webtop_openclaw() {
-  sudo rm -rf ./openclaw-data
+  sudo rm -rf ./.openclaw
   sudo rm -rf ./webtop
 }
 
@@ -100,7 +103,7 @@ pairing_openclaw_DM() {
 
 # 使用互動模式進入 openclaw 容器
 exec_tty_in_openclaw() {
-  docker exec -it openclaw bash
+  docker exec -it -u 1000 openclaw bash
 }
 
 # 使用互動模式進入 openclaw 容器並以 root 執行
@@ -111,7 +114,7 @@ sudo_exec_tty_in_openclaw() {
 # 在 openclaw 容器內執行一段 shell 指令（傳入單一字串，可含 &&、>、& 等）
 exec_bash_tty_in_openclaw() {
   echo "$*"
-  docker exec -it openclaw bash -c 'eval "$1"' _ "$*"
+  docker exec -it -u 1000 openclaw bash -c 'eval "$1"' _ "$*"
 }
 
 # 在 openclaw 容器內以 root 執行一段 shell 指令（傳入單一字串，可含 &&、>、& 等）
@@ -123,7 +126,7 @@ sudo_exec_bash_tty_in_openclaw() {
 # 在 openclaw 容器內執行一段 shell 指令（傳入單一字串，可含 &&、>、& 等）
 exec_bash_in_openclaw() {
   echo "$*"
-  docker exec openclaw bash -c 'eval "$1"' _ "$*"
+  docker exec -u 1000 openclaw bash -c 'eval "$1"' _ "$*"
 }
 
 # 在 openclaw 容器內以 root 執行一段 shell 指令（傳入單一字串，可含 &&、>、& 等）
@@ -135,7 +138,7 @@ sudo_exec_bash_in_openclaw() {
 # 在 openclaw 容器內執行 openclaw 命令
 exec_tty_openclaw_command() {
   echo "openclaw $@"
-  docker exec -it openclaw bash -c 'openclaw "$@"' _ "$@"
+  docker exec -it -u 1000 openclaw bash -c 'openclaw "$@"' _ "$@"
 }
 
 # 在 openclaw 容器內以 root 執行 openclaw 命令
@@ -147,7 +150,7 @@ sudo_exec_tty_openclaw_command() {
 # 在 openclaw 容器內執行 openclaw 命令
 exec_openclaw_command() {
   echo "openclaw $@"
-  docker exec openclaw bash -c 'openclaw "$@"' _ "$@"
+  docker exec -u 1000 openclaw bash -c 'openclaw "$@"' _ "$@"
 }
 
 # 在 openclaw 容器內以 root 執行 openclaw 命令

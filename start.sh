@@ -6,12 +6,12 @@ source ./libs/openclaw.sh
 
 echo "WEBTOP_OPENCLAW_IMAGE=$WEBTOP_OPENCLAW_IMAGE"
 
-if [ ! -d "./openclaw-data" ]; then
-  echo "openclaw-data 資料夾不存在，需要初始化"
+if [ ! -d "./.openclaw" ]; then
+  echo ".openclaw 資料夾不存在，需要初始化"
 
   # 建立 openclaw 資料夾
-  mkdir -p ./openclaw-data
-  chmod 777 ./openclaw-data
+  mkdir -p ./.openclaw
+  chmod 777 ./.openclaw
 
   # 啟動 webtop 容器
   run_webtop
@@ -24,6 +24,10 @@ if [ ! -d "./openclaw-data" ]; then
 
   # 初始化 openclaw（此時 gateway 已在跑，Control UI / health check 可用）
   run_openclaw_onboard
+
+  echo "openclaw 初始化完成"
+  echo "如果需要配對 DM (pairing code)，請執行 ./pairing-DM.sh，並輸入 pairing code"
+  echo "如果需要配對裝置，請執行 ./pairing-devices.sh，並輸入 request-id"
 else
   # 啟動 webtop 容器 & openclaw
   run_webtop_openclaw
