@@ -37,6 +37,15 @@ if [ ! -d "./.openclaw" ]; then
   fi
   echo "WEBTOP_HTTPS_PORT=$WEBTOP_HTTPS_PORT" >> .env
 
+  # 是否啟用 docker socket 掛載
+  read -p "是否啟用 docker socket 掛載 (Y/n): " ENABLE_DOCKER_SOCKET
+  if [ "$ENABLE_DOCKER_SOCKET" == "Y" || "$ENABLE_DOCKER_SOCKET" == "y" ]; then
+    echo "ENABLE_DOCKER_SOCKET=Y" >> .env
+    echo "MOUNT_DOCKER_SOCKET=/var/run/docker.sock:/run/docker.sock:ro" >> .env
+  else
+    echo "ENABLE_DOCKER_SOCKET=N" >> .env
+  fi
+
   # 啟動 webtop 容器
   run_webtop
 

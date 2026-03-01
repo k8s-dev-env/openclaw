@@ -4,6 +4,14 @@ chmod_openclaw_home_777() {
   sudo_exec_bash_in_openclaw "chmod 777 /config/.openclaw"
 }
 
+add_user_to_docker_group() {
+  local DOCKER_GROUP_ID=$(stat -c '%g' /var/run/docker.sock 2>/dev/null || stat -f '%g' /var/run/docker.sock)
+  local USER_NAME=$1
+
+  sudo_exec_bash_in_openclaw "groupmod -g $DOCKER_GROUP_ID docker || groupadd -g $DOCKER_GROUP_ID docker"
+  sudo_exec_bash_in_openclaw "usermod -aG ${DOCKER_GROUP_ID} ${USER_NAME}"
+}
+
 # 在本地啟動 webtop 容器
 run_webtop() {
   if [ -z "$WEBTOP_OPENCLAW_IMAGE" ]; then
@@ -15,9 +23,21 @@ run_webtop() {
     echo "WEBTOP_OPENCLAW_IMAGE=$WEBTOP_OPENCLAW_IMAGE" >> openclaw.env
   fi
 
+  # 將 MOUNT_* 環境變數轉換為 docker volume 參數
+  set -a
+  source .env
+  set +a
+  set +e
+  DOCKER_VOLUMES=$(env | grep '^MOUNT_' | cut -d= -f2- | sed 's/^/-v /' | xargs)
+  set -e
+
+  echo "MOUNT_VOLUMES: ${DOCKER_VOLUMES}"
+  local DOCKER_GROUP_ID=$(stat -c '%g' /var/run/docker.sock 2>/dev/null || stat -f '%g' /var/run/docker.sock)
+
   docker run -d \
     --env-file openclaw.env \
     --env-file .env \
+    --group-add ${DOCKER_GROUP_ID} \
     -e PUID=1000 \
     -e PGID=1000 \
     -v ./webtop:/config \
@@ -25,6 +45,7 @@ run_webtop() {
     -v ./obsidian:/config/obsidian \
     -v ./nginx/conf.d/openclaw.conf:/etc/nginx/conf.d/openclaw.conf \
     -v /dev/device:/dev/device:ro \
+    ${DOCKER_VOLUMES} \
     --name webtop-openclaw-${OPENCLAW_ID} \
     -p ${WEBTOP_HTTPS_PORT}:3001 \
     -p ${DASHBOARD_PORT}:8080 \
@@ -33,6 +54,9 @@ run_webtop() {
     --restart unless-stopped \
     ${WEBTOP_OPENCLAW_IMAGE}
   
+  if [ -n "$ENABLE_DOCKER_SOCKET" ] && [ "$ENABLE_DOCKER_SOCKET" == "Y" ]; then
+    add_user_to_docker_group "abc"
+  fi
   chmod_openclaw_home_777
   exec_bash_in_openclaw "while ! nc -z -w 3 localhost 3000; do echo 'Waiting for webtop to start...'; sleep 3; done"
 }
