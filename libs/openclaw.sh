@@ -33,6 +33,11 @@ run_webtop() {
 
   echo "MOUNT_VOLUMES: ${DOCKER_VOLUMES}"
   local DOCKER_GROUP_ID=$(stat -c '%g' /var/run/docker.sock 2>/dev/null || stat -f '%g' /var/run/docker.sock)
+  
+  # 建立本地 docker volume 目錄（預設在當前目錄下）
+  local LOCAL_DOCKER_VOLUME_PATH=$(pwd)/docker_volumes
+  mkdir -p ${LOCAL_DOCKER_VOLUME_PATH}
+  chmod 777 ${LOCAL_DOCKER_VOLUME_PATH}
 
   docker run -d \
     --env-file openclaw.env \
@@ -40,10 +45,12 @@ run_webtop() {
     --group-add ${DOCKER_GROUP_ID} \
     -e PUID=1000 \
     -e PGID=1000 \
+    -e LOCAL_DOCKER_VOLUME_PATH=${LOCAL_DOCKER_VOLUME_PATH} \
     -v ./webtop:/config \
     -v ./.openclaw:/config/.openclaw \
     -v ./obsidian:/config/obsidian \
     -v ./nginx/conf.d/openclaw.conf:/etc/nginx/conf.d/openclaw.conf \
+    -v ${LOCAL_DOCKER_VOLUME_PATH}:${LOCAL_DOCKER_VOLUME_PATH} \
     -v /dev/device:/dev/device:ro \
     ${DOCKER_VOLUMES} \
     --name webtop-openclaw-${OPENCLAW_ID} \
